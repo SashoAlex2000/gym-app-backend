@@ -7,7 +7,10 @@ authors = [
     { name = "SashoAlex2000", email = "sahooo3@abv.bg" }
 ]
 requires-python = ">=3.14"
-dependencies = []
+dependencies = [
+    "fastapi>=0.162.2",
+    "uvicorn[standard]>=0.54.0",
+]
 
 [project.scripts]
 gym-app-backend = "gym_app_backend:main"
