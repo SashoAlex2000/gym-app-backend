@@ -1,0 +1,28 @@
+# Local virtual environment (the image builds its own)
+.venv/
+
+# Python, test, type-check and lint caches
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+
+# Version control and editor files
+.git/
+.gitignore
+.vscode/
+.idea/
+
+# Secrets and local settings
+.env
+.env.*
+!.env.example
+
+# Files the running app doesn't need
+tests/
+Dockerfile
+.dockerignore
