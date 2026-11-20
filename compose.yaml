@@ -1,0 +1,45 @@
+# Runs the app and a Postgres database together: docker compose up --build
+name: gym-app-backend
+
+services:
+  app:
+    # Build the app image from the Dockerfile in this folder.
+    build: .
+    ports:
+      - "8000:8000"
+    # Start the app only after the database passes its health check.
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    # Pinned to major version 18. Minor updates are safe, but a newer major
+    # version can't use an older version's data without a migration.
+    image: postgres:18
+    # Postgres creates this user and database the first time it starts with
+    # an empty volume. The values come from .env (see .env.example).
+    environment:
+      POSTGRES_USER: "${POSTGRES_USER:?set it in .env (copy .env.example to .env)}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:?set it in .env (copy .env.example to .env)}"
+      POSTGRES_DB: "${POSTGRES_DB:?set it in .env (copy .env.example to .env)}"
+    # Published on this machine only, for tools like psql. The app reaches
+    # the database over Compose's internal network and doesn't need this.
+    ports:
+      - "127.0.0.1:5432:5432"
+    # Keep the database files in a named volume, so they survive the
+    # container being removed and recreated.
+    volumes:
+      - pgdata:/var/lib/postgresql
+    # Healthy once Postgres accepts connections over TCP. The temporary
+    # server Postgres runs during first-time setup doesn't accept TCP
+    # connections, so the check can't pass too early.
+    healthcheck:
+      test: ["CMD", "pg_isready", "-h", "localhost", "-U", "${POSTGRES_USER}", "-d", "${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+      start_interval: 1s
+
+volumes:
+  pgdata:
