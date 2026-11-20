@@ -17,12 +17,12 @@ htmlcov/
 .vscode/
 .idea/
 
-# Secrets and local settings
+# Secrets and local settings, including the .env.example template
 .env
 .env.*
-!.env.example
 
 # Files the running app doesn't need
 tests/
 Dockerfile
 .dockerignore
+compose.yaml
